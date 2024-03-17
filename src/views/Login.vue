@@ -86,7 +86,7 @@ const login = async () => {
   let result = await userLoginService(loginForm.value)
   tokenStore.setToken(result.data.token)
   userStore.setUser(result.data.id, result.data.username)
-  await router.push('/home')
+  await router.push('/')
   ElMessage.success(result.msg ? result.msg : "登录成功")
 }
 
@@ -104,7 +104,7 @@ const register = async () => {
 
 <template>
   <div class="login">
-    <h1 class="gradient-text">餐饮后台管理</h1>
+    <h1 class="gradient-text">餐饮管理后台</h1>
     <div class="form">
       <el-menu
           :default-active="activeIndex"
