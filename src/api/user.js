@@ -14,3 +14,15 @@ export const userLoginService = (loginData)=> {
 export const userLogoutService = () => {
     return request.delete('/user/logout')
 }
+
+export const updatePasswordService = (updatePasswordFrom) => {
+    return request.patch('/user/updatePassword', updatePasswordFrom)
+}
+
+export const userLogoffService = (userId) => {
+    return request.delete('/user/logoff?userId=' + userId)
+}
+
+export const getUserService = (userId) => {
+    return request.get('/user/getUser')
+}
