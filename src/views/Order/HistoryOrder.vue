@@ -1,19 +1,31 @@
 <script setup>
 import {ref} from 'vue'
 
-import {orderService} from '@/api/order.js'
+import {DiningOutService, orderService} from '@/api/order.js'
 import {Search} from "@element-plus/icons-vue";
+import router from "@/router/index.js";
+import {ElMessage} from "element-plus";
 
-const timeValue = ref('')
-const defaultTime = ref([
+let date = new Date()
+
+const timeValue = ref([
+  new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+  new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+])
+
+const defaultTime = [
   new Date(2000, 1, 1, 0, 0, 0),
   new Date(2000, 2, 1, 23, 59, 59),
-])
+]
+
+const out = () => {
+  console.log(timeValue.value[1])
+}
 
 const orderPage = ref({
   pageNum: 1,
   pageSize: 17,
-  total : 0,
+  total: 0,
   pages: 0,
   customerName: '',
   begin: '',
@@ -29,6 +41,7 @@ const tableData = ref([
     allPrice: '',
     description: '',
     createTime: '',
+    status: 1,
     dishVOList: [
       {
         dish_id: '',
@@ -68,13 +81,13 @@ const formatDateTime = (date) => {
 
 const pageList = async (reset) => {
   if (reset === false) {
-    if (timeValue.value.at(0) !== undefined && timeValue.value.at(0) !== '') {
-      orderPage.value.begin = formatDateTime(timeValue.value.at(0))
+    if (timeValue.value[0] !== undefined) {
+      orderPage.value.begin = formatDateTime(timeValue.value[0])
     }
-    if (timeValue.value.at(1) !== undefined && timeValue.value.at(1) !== '') {
-      orderPage.value.end = formatDateTime(timeValue.value.at(1))
+    if (timeValue.value[1] !== undefined) {
+      orderPage.value.end = formatDateTime(timeValue.value[1])
     }
-  } else if(reset === true) {
+  } else if (reset === true) {
     orderPage.value.pageNum = 1
     orderPage.value.pageSize = 17
     orderPage.value.customerName = ''
@@ -88,7 +101,13 @@ const pageList = async (reset) => {
   allPrice.value = 0
   tableData.value.forEach((item, index, arr) => {
     allPrice.value += item.allPrice
-  } )
+  })
+}
+
+const DiningOut = async (orderId) => {
+  let result = await DiningOutService(orderId)
+  ElMessage.success(result.msg ? result.msg : "出餐成功")
+  router.go(0)
 }
 
 // created调用
@@ -143,17 +162,29 @@ pageList(false)
     <el-table-column label="桌号" prop="table"/>
     <el-table-column label="总价格/元" prop="allPrice"/>
     <el-table-column label="下单时间" prop="createTime"/>
+    <el-table-column label="出餐">
+      <template #default="scope">
+        <el-button
+            v-if="scope.row.status === 0"
+            style="transform: translate(-15%,0%)"
+            @click="DiningOut(scope.row.id)"
+            type="success"
+        >出餐
+        </el-button>
+        <span v-if="scope.row.status === 1">已出餐</span>
+      </template>
+    </el-table-column>
   </el-table>
   <div class="bottom">
-      <el-pagination
-          v-model:current-page="orderPage.pageNum"
-          v-model:page-size="orderPage.pageSize"
-          :background="true"
-          layout="total, prev, pager, next, jumper"
-          :total="orderPage.total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      />
+    <el-pagination
+        v-model:current-page="orderPage.pageNum"
+        v-model:page-size="orderPage.pageSize"
+        :background="true"
+        layout="total, prev, pager, next, jumper"
+        :total="orderPage.total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 

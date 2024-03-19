@@ -7,3 +7,7 @@ import qs from 'qs';
 export const orderService = (orderPage)=>{
    return request.get('/order/list?' + qs.stringify(orderPage))
 }
+
+export const DiningOutService = (orderId) => {
+   return request.put('/order/status?orderId=' + orderId)
+}

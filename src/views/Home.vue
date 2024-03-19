@@ -12,11 +12,12 @@ import {
   SwitchButton,
 } from '@element-plus/icons-vue'
 
-import {ref} from "vue";
+import {onUnmounted, ref} from "vue";
+import Stomp from 'stompjs'
 import {useRouter} from 'vue-router'
 import {useUserStore, useTokenStore} from "@/stores/index.js";
 import {userLogoutService} from '@/api/user.js'
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
 const router = useRouter()
 
@@ -24,6 +25,43 @@ const userStore = useUserStore()
 
 const tokenStore = useTokenStore()
 
+// RabbitMQ配置
+const MQTT_SERVICE = 'ws://localhost:15674/ws' // mqtt服务地址
+const MQTT_USERNAME = 'guest' // mqtt连接用户名
+const MQTT_PASSWORD = 'guest' // mqtt连接密码
+
+const client = Stomp.client(MQTT_SERVICE)
+const onConnected = () => {
+  const topic = "/queue/order.queue"
+  client.subscribe(topic, responseCallBack, onFailed)
+}
+
+const responseCallBack = (frame) => {
+  ElNotification({
+    title: '注意',
+    message: frame.body,
+    duration: 60000,
+    type: 'warning',
+  })
+}
+
+const onFailed = (frame) => {
+  ElMessage.error("Failed => " + frame)
+}
+
+const connect = () => {
+  const headers = {
+    login: MQTT_USERNAME,
+    passcode: MQTT_PASSWORD
+  }
+  client.connect(headers, onConnected, onFailed)
+}
+
+connect()
+
+onUnmounted(() => {
+  client.disconnect()
+})
 
 const github = () => {
   window.location.href = "https://github.com/HolyWizardXD"
