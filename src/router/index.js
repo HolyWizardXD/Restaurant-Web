@@ -37,8 +37,11 @@ const router = createRouter({
 
 // 登陆访问拦截
 router.beforeEach((to) => {
+    // 取得token
     const tokenStore = useTokenStore()
+    // 判断是否进行拦截 拦截到登录页面
     if (!tokenStore.token && to.path !== '/login') return '/login'
+    // 放行
     return true
 })
 

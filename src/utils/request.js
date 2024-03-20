@@ -37,7 +37,7 @@ instance.interceptors.response.use(
             return result.data
         }
         // 操作失败
-        ElMessage.error(result.data.msg?result.data.msg:'服务异常')
+        ElMessage.error(result.msg?result.msg:'服务异常')
         return Promise.reject(result.data);
     },
     err=>{

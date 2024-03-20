@@ -12,13 +12,13 @@ const form = ref()
 const tokenStore = useTokenStore()
 
 const userStore = useUserStore()
-
+// 修改密码表单
 const updatePasswordForm = ref({
   oldPassword: '',
   newPassword: '',
   rePassword: ''
 })
-
+// 自定义校验密码规则
 const checkRePassword = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入确认密码'))
@@ -28,7 +28,7 @@ const checkRePassword = (rule, value, callback) => {
     callback()
   }
 }
-
+// 校验密码规则
 const rules = {
   oldPassword: [
     {required: true, message: '请输入密码', trigger: 'blur'},
@@ -42,13 +42,18 @@ const rules = {
     {validator: checkRePassword, trigger: 'blur'}
   ]
 }
-
+// 修改密码
 const updatePassword = async () => {
+  // 校验密码
   await form.value.validate()
+  // 修改密码请求
   let result = await updatePasswordService(updatePasswordForm.value)
+  // 移除本地数据
   tokenStore.removeToken()
   userStore.removeUser()
-  router.push('/login')
+  // 重新登录
+  await router.push('/login')
+  // 消息提示
   ElMessage.success(result.msg?result.msg:"密码修改成功，请重新登录")
 }
 

@@ -5,20 +5,21 @@ import {ElMessage} from "element-plus";
 import {useTokenStore, useUserStore} from "@/stores";
 import {ref} from "vue";
 import { useRouter } from 'vue-router'
-
 const router = useRouter()
 
+// 当前激活页面
 const activeIndex = ref('1')
-
+// 是否是注册页面
 const isRegister = ref(false)
-
+// 使用token store
 const tokenStore = useTokenStore()
-
+// 使用user store
 const userStore = useUserStore()
-
+// 登录校验form
 const loginFormVa = ref()
-
+// 注册校验form
 const registerFormVa = ref()
+// 登录 注册 切换函数
 const handleSelect = (key, keyPath) => {
   if (key === '1') {
     isRegister.value = false
@@ -26,19 +27,19 @@ const handleSelect = (key, keyPath) => {
     isRegister.value = true
   }
 }
-
+// 用户登录表单
 const loginForm = ref({
   username: '',
   password: ''
 })
-
+// 用户注册表单
 const registerForm = ref({
   username: '',
   password: '',
   rePassword: '',
   phone: ''
 })
-
+// 自定义校验规则函数
 const checkRePassword = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入确认密码'))
@@ -48,12 +49,12 @@ const checkRePassword = (rule, value, callback) => {
     callback()
   }
 }
-
+// 登录校验规则
 const login_rules = {
   username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
   password: [{required: true, message: '请输入密码', trigger: 'blur'}]
 }
-
+// 注册校验规则
 const register_rules = {
   username: [
     {required: true, message: '请输入用户名', trigger: 'blur'},
@@ -72,6 +73,7 @@ const register_rules = {
   ],
 }
 
+// 清除用户注册信息函数
 const clearRegisterForm = () => {
   registerForm.value = {
     username: '',
@@ -80,23 +82,38 @@ const clearRegisterForm = () => {
     phone: ''
   }
 }
-
+// 用户登录函数
 const login = async () => {
+  // 校验
   await loginFormVa.value.validate()
+  // 登陆之前清除user&token缓存
+  userStore.removeUser()
+  tokenStore.removeToken()
+  // 登录请求
   let result = await userLoginService(loginForm.value)
+  // 设置token以及user信息
   tokenStore.setToken(result.data.token)
   userStore.setUser(result.data.id, result.data.username)
+  // router到主页
   await router.push('/')
+  // 提示
   ElMessage.success(result.msg ? result.msg : "登录成功")
 }
-
+// 用户注册函数
 const register = async () => {
+  // 注册前校验
   await registerFormVa.value.validate()
+  // 注册请求
   let result = await userRegisterService(registerForm.value)
+  // 清除注册信息
   clearRegisterForm()
+  // 清除token
   tokenStore.removeToken()
+  // 清除user
   userStore.removeUser()
+  // 刷新当前页面
   router.go(0)
+  // 提示信息
   ElMessage.success(result.msg ? result.msg : "注册成功")
 }
 

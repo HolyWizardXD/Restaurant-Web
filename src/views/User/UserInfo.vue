@@ -1,23 +1,26 @@
 <script setup>
-
 import {ElMessage, ElMessageBox} from "element-plus";
-
 import {useUserStore,useTokenStore} from "@/stores/index.js";
 import router from "@/router/index.js";
 import {userLogoffService, getUserService} from "@/api/user.js";
 import {ref} from "vue";
 
 const userStore = useUserStore()
-const tokenStore = useTokenStore()
 
+const tokenStore = useTokenStore()
+// 当前状态
 const status = ref(0)
+// 电话号
 const phone = ref('')
+// 获得用户信息
 const getUser = async () => {
+  // 获取用户信息请求
   let result = await getUserService()
+  // 封装数据
   status.value = result.data.status
   phone.value = result.data.phone
 }
-
+// 注销函数
 const logoff = () => {
   ElMessageBox.confirm(
       '以下操作进行后不可更改,是否确认注销账户?',
@@ -29,8 +32,11 @@ const logoff = () => {
       }
   )
       .then(async () => {
+        // 调用注销服务
         await userLogoffService(userStore.user.id)
-        router.push('/login')
+        // 转到登录页
+        await router.push('/login')
+        // 移除用户缓存
         userStore.removeUser()
         tokenStore.removeToken()
         ElMessage({
@@ -45,7 +51,7 @@ const logoff = () => {
         })
       })
 }
-
+// 页面生成时取得用户信息
 getUser()
 
 </script>

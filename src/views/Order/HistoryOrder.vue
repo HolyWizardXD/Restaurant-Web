@@ -3,36 +3,35 @@ import {ref} from 'vue'
 
 import {DiningOutService, orderService} from '@/api/order.js'
 import {Search} from "@element-plus/icons-vue";
-import router from "@/router/index.js";
 import {ElMessage} from "element-plus";
-
+// date函数
 let date = new Date()
-
+// 定义默认查询订单时间范围数据
 const timeValue = ref([
   new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
   new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
 ])
-
+// 默认时间数据
 const defaultTime = [
   new Date(2000, 1, 1, 0, 0, 0),
   new Date(2000, 2, 1, 23, 59, 59),
 ]
-
-const out = () => {
-  console.log(timeValue.value[1])
-}
-
+// 分页查询条件
 const orderPage = ref({
   pageNum: 1,
   pageSize: 17,
-  total: 0,
-  pages: 0,
   customerName: '',
   begin: '',
   end: ''
 })
-
-
+// 返回的分页信息
+const pageInfo = ref({
+  pageNum: 0,
+  pageSize: 0,
+  total: 0,
+  pages: 0
+})
+// 分页查询订单数据
 const tableData = ref([
   {
     id: '',
@@ -53,17 +52,18 @@ const tableData = ref([
     ]
   }
 ])
-
+// 所有价格数据
 const allPrice = ref(0)
+// 更改当前页分页查询函数
 const handleCurrentChange = (val) => {
   orderPage.value.pageNum = val
   pageList(false)
 }
-
+// 更改每页数量分页查询函数 未启用
 const handleSizeChange = (val) => {
 
 }
-
+// 时间转换 js date转换为java LocalDateTime
 const formatDateTime = (date) => {
   const y = date.getFullYear()
   let m = date.getMonth() + 1
@@ -78,9 +78,11 @@ const formatDateTime = (date) => {
   second = second < 10 ? ('0' + second) : second
   return y + '-' + m + '-' + d + 'T' + h + ':' + minute + ':' + second
 }
-
+// 分页查询请求函数
 const pageList = async (reset) => {
+  // 判断是否为重置查询
   if (reset === false) {
+    // 判断是否使用按时间查询 转换date
     if (timeValue.value[0] !== undefined) {
       orderPage.value.begin = formatDateTime(timeValue.value[0])
     }
@@ -88,29 +90,38 @@ const pageList = async (reset) => {
       orderPage.value.end = formatDateTime(timeValue.value[1])
     }
   } else if (reset === true) {
+    // 重置分页查询条件
     orderPage.value.pageNum = 1
     orderPage.value.pageSize = 17
     orderPage.value.customerName = ''
+    timeValue.value = [
+      new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
+      new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
+    ]
+    orderPage.value.begin = formatDateTime(timeValue.value[0])
+    orderPage.value.end = formatDateTime(timeValue.value[1])
   }
+  // 查询请求
   let result = await orderService(orderPage.value)
+  // 封装返回数据
   tableData.value = result.data.records
-  orderPage.value.pageNum = result.data.current
-  orderPage.value.pageSize = result.data.size
-  orderPage.value.total = result.data.total
-  orderPage.value.pages = result.data.pages
+  pageInfo.value.pageNum = result.data.current
+  pageInfo.value.pageSize = result.data.size
+  pageInfo.value.total = result.data.total
+  pageInfo.value.pages = result.data.pages
   allPrice.value = 0
+  // 计算总价格
   tableData.value.forEach((item, index, arr) => {
     allPrice.value += item.allPrice
   })
 }
-
+// 出餐函数
 const DiningOut = async (orderId) => {
   let result = await DiningOutService(orderId)
   ElMessage.success(result.msg ? result.msg : "出餐成功")
-  router.go(0)
+  await pageList(false)
 }
-
-// created调用
+// 初始调用
 pageList(false)
 
 </script>
@@ -134,6 +145,7 @@ pageList(false)
           style="width: 240px"
           size="default"
           placeholder="请输入顾客名"
+          @keyup.enter="pageList(false)"
           :prefix-icon="Search"
       />
       <span style="color: #1a8170;margin-left: 1%">总售价:{{ allPrice }}元</span>
@@ -177,11 +189,11 @@ pageList(false)
   </el-table>
   <div class="bottom">
     <el-pagination
-        v-model:current-page="orderPage.pageNum"
-        v-model:page-size="orderPage.pageSize"
+        v-model:current-page="pageInfo.pageNum"
+        v-model:page-size="pageInfo.pageSize"
         :background="true"
         layout="total, prev, pager, next, jumper"
-        :total="orderPage.total"
+        :total="pageInfo.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
     />

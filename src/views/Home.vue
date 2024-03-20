@@ -31,11 +31,17 @@ const MQTT_USERNAME = 'guest' // mqtt连接用户名
 const MQTT_PASSWORD = 'guest' // mqtt连接密码
 
 const client = Stomp.client(MQTT_SERVICE)
+// 关闭控制台消息
+client.debug = null
+
+// 连接到RabbitMQ
 const onConnected = () => {
   const topic = "/queue/order.queue"
+  // 订阅
   client.subscribe(topic, responseCallBack, onFailed)
 }
 
+// 新订单提示信息
 const responseCallBack = (frame) => {
   ElNotification({
     title: '注意',
@@ -44,11 +50,11 @@ const responseCallBack = (frame) => {
     type: 'warning',
   })
 }
-
+// 连接失败函数
 const onFailed = (frame) => {
   ElMessage.error("Failed => " + frame)
 }
-
+// 连接函数
 const connect = () => {
   const headers = {
     login: MQTT_USERNAME,
@@ -56,20 +62,21 @@ const connect = () => {
   }
   client.connect(headers, onConnected, onFailed)
 }
-
+// 调用连接
 connect()
-
+// 关闭连接
 onUnmounted(() => {
   client.disconnect()
 })
-
+// GitHub跳转
 const github = () => {
   window.location.href = "https://github.com/HolyWizardXD"
 }
-
+// 未启用
 const handleOpen = (key, keyPath) => {
 
 }
+// 未启用
 const handleClose = (key, keyPath) => {
 
 }
@@ -85,10 +92,14 @@ const logout = () => {
       }
   )
       .then(async () => {
+        // 登出服务
         let result = await userLogoutService()
+        // 清除缓存
         tokenStore.removeToken()
         userStore.removeUser()
-        router.push('/login')
+        // 跳转登录页面
+        await router.push('/login')
+        // 提示信息
         ElMessage.success(result.msg ? result.msg : "登出成功")
       })
       .catch(() => {
@@ -99,7 +110,7 @@ const logout = () => {
       })
 
 }
-
+// 未启用
 const handleSelect = (key, keyPath) => {
 }
 
