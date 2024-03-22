@@ -56,11 +56,11 @@ const rules = {
 }
 // 图片展示地址
 const imgUrl = ref('')
-// 新增dialog展示
+// 新增dialog显示
 const addDialogFormVisible = ref(false)
-// 修改dialog展示
+// 修改dialog显示
 const updateDialogFormVisible = ref(false)
-// 上传图片dialog展示
+// 上传图片dialog显示
 const uploadPictureVisible = ref(false)
 // 分页查询原料数据
 const getInventory = async () => {
@@ -72,10 +72,6 @@ const getInventory = async () => {
   pageInfo.value.size = result.data.size
   pageInfo.value.total = result.data.total
   pageInfo.value.pages = result.data.pages
-}
-// 新增原料dialog
-const addDialog = () => {
-  addDialogFormVisible.value = true
 }
 // 修改原料dialog
 const updateDialog = (row) => {
@@ -194,7 +190,7 @@ const uploadPictureConfirm = async () => {
   // 调用上传服务
   await uploadPictureService(data)
   // 刷新数据
-  getInventory()
+  await getInventory()
   // 关闭dialog
   uploadPictureVisible.value = false
   // 提示
@@ -229,7 +225,7 @@ getInventory()
       </el-input>
     </div>
     <div style="margin-right: 12px">
-      <el-button type="primary" @click="addDialog">
+      <el-button type="primary" @click="addDialogFormVisible = true">
         新增
       </el-button>
     </div>
@@ -310,7 +306,7 @@ getInventory()
   <div>
     <el-table :data="inventoryTable" style="width: 100%" height="775">
       <el-table-column label="原料号" prop="id"/>
-      <el-table-column label="原料照片">
+      <el-table-column label="原料图片">
         <template #default="props">
           <img :src="props.row.pictureUrl" class="pictureTwo">
         </template>

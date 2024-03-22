@@ -124,9 +124,7 @@ const updateEmployee = async () => {
   ElMessage.success(result.msg ? result.msg : "员工修改成功")
 }
 // 更改分页页数函数 未启用
-const handleSizeChange = () => {
-
-}
+const handleSizeChange = () => {}
 // 更改当前页函数
 const handleCurrentChange = (val) => {
   pageData.value.pageNum = val
