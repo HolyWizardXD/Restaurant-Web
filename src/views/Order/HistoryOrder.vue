@@ -148,7 +148,7 @@ pageList(false)
           @keyup.enter="pageList(false)"
           :prefix-icon="Search"
       />
-      <span style="color: #1a8170;margin-left: 1%">总售价:{{ allPrice }}元</span>
+      <span style="color: #1a8170;margin-left: 1%">销售额:{{ allPrice }}元</span>
       <el-button type="primary" @click="pageList(false)" style="margin-left: 39%">查询</el-button>
       <el-button @click="pageList(true)">重置</el-button>
     </div>

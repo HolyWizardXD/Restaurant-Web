@@ -1,6 +1,10 @@
 <script setup>
-
-import {employeeListService, employeeStatusService, addEmployeeService, updateEmployeeService} from '@/api/employee.js'
+import {
+  employeeListService,
+  employeeStatusService,
+  addEmployeeService,
+  updateEmployeeService
+} from '@/api/employee.js'
 import {ref} from "vue";
 import {Search} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
@@ -17,9 +21,9 @@ const pageInfo = ref({
   total: 0,
   pages: 0
 })
-// 校验用户新增相关form必备引用定义
+// 校验员工新增相关form必备引用定义
 const form = ref()
-// 校验用户修改相关form必备引用定义
+// 校验员工修改相关form必备引用定义
 const form2 = ref()
 // 新增员工和修改员工校验
 const rules = {
@@ -50,7 +54,7 @@ const updateEmployeeForm = ref({
   salary: '',
   phone: ''
 })
-// 新增员工数据表但
+// 新增员工数据表单
 const employeeForm = ref({
   id: 0,
   employeeName: '',
@@ -87,10 +91,17 @@ const dialog = () => {
 const addEmployee = async () => {
   // 校验员工信息
   await form.value.validate()
-  // 关闭dialog
-  dialogFormVisible.value = false
   // 新增员工请求
   let result = await addEmployeeService(employeeForm.value)
+  // 关闭dialog
+  dialogFormVisible.value = false
+  // 清空新增员工表
+  employeeForm.value = {
+    id: 0,
+    employeeName: '',
+    salary: '',
+    phone: ''
+  }
   // 重新查询员工
   await getEmployee()
   // 提示信息
@@ -102,11 +113,11 @@ const dialog2 = (row) => {
   dialogFormVisible2.value = true
 }
 // 修改员工信息函数
-const updateEmployee = async (employee) => {
+const updateEmployee = async () => {
   // 校验员工信息
   await form2.value.validate()
   // 修改员工信息请求 修改员工信息修改的响应式数据 无需重新请求数据
-  let result = await updateEmployeeService(employee)
+  let result = await updateEmployeeService(updateEmployeeForm.value)
   // 关闭dialog
   dialogFormVisible2.value = false
   // 提示信息
@@ -146,7 +157,7 @@ getEmployee()
       <el-button type="primary" @click="dialog">
         新增
       </el-button>
-    </div>
+    </div >
   </div>
   <el-dialog v-model="dialogFormVisible" title="新增员工" width="500">
     <el-form
@@ -196,7 +207,7 @@ getEmployee()
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogFormVisible2 = false">取消</el-button>
-        <el-button type="primary" @click="updateEmployee(updateEmployeeForm)">
+        <el-button type="primary" @click="updateEmployee">
           确定
         </el-button>
       </div>

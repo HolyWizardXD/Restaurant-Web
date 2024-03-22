@@ -11,8 +11,8 @@ export const employeeStatusService = (id,status) => {
     return request.put('/employee/status?id=' + id + '&status=' + status)
 }
 // 新增员工状态
-export const addEmployeeService = (employeeForm) => {
-    return request.post('/employee/addEmployee', employeeForm)
+export const addEmployeeService = (employee) => {
+    return request.post('/employee/addEmployee', employee)
 }
 // 修改员工信息接口
 export const updateEmployeeService = (employee) => {

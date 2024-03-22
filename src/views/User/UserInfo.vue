@@ -24,7 +24,7 @@ const getUser = async () => {
 const logoff = () => {
   ElMessageBox.confirm(
       '以下操作进行后不可更改,是否确认注销账户?',
-      'Warning',
+      '警告',
       {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
