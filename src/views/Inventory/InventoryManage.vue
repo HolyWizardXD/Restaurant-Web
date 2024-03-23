@@ -73,6 +73,11 @@ const getInventory = async () => {
   pageInfo.value.total = result.data.total
   pageInfo.value.pages = result.data.pages
 }
+// 关闭之前刷新数据
+const handleClose = (done) => {
+  done()
+  getInventory()
+}
 // 修改原料dialog
 const updateDialog = (row) => {
   updateInventoryForm.value = row
@@ -82,12 +87,25 @@ const updateDialog = (row) => {
 const updateInventory = async () => {
   // 校验原料信息
   await form2.value.validate()
-  // 修改原料请求 修改原料修改的响应式数据 无需重新请求数据
+  // 修改原料请求
   let result = await updateInventoryService(updateInventoryForm.value)
   // 关闭dialog
   updateDialogFormVisible.value = false
+  // 刷新数据
+  await getInventory()
+  // 清空修改数据表单
+  updateInventoryForm.value = {
+    id: 0,
+    material: '',
+    stock: ''
+  }
   // 提示信息
   ElMessage.success(result.msg ? result.msg : "原料修改成功")
+}
+// 取消修改原料
+const updateInventoryCancel = () => {
+  updateDialogFormVisible.value = false
+  getInventory()
 }
 // 新增原料
 const addInventory = async () => {
@@ -151,9 +169,6 @@ const uploadData = ref({
   id: '',
   file: null
 })
-
-// 图片
-const file = ref()
 // 图片预览
 const onSelectPicture = (uploadFile) => {
   imgUrl.value = URL.createObjectURL(uploadFile.raw)
@@ -163,6 +178,7 @@ const onSelectPicture = (uploadFile) => {
 const uploadPicture = (row) => {
   uploadPictureVisible.value = true
   uploadData.value.id = row.id
+  material.value = row.material
   if(row.pictureUrl.search("default") === -1){
     imgUrl.value = row.pictureUrl
   }else {
@@ -173,12 +189,11 @@ const uploadPicture = (row) => {
 const cancelUpload = () => {
   uploadPictureVisible.value = false
   material.value = ''
+  imgUrl.value = ''
   uploadData.value = {
     id: '',
     file: null
   }
-  file.value = null
-  imgUrl.value = ''
 }
 // 确认上传
 const uploadPictureConfirm = async () => {
@@ -254,7 +269,7 @@ getInventory()
       </div>
     </template>
   </el-dialog>
-  <el-dialog v-model="updateDialogFormVisible" title="修改原料" width="500">
+  <el-dialog v-model="updateDialogFormVisible" title="修改原料" width="500" :before-close="handleClose">
     <el-form
         :model="updateInventoryForm"
         label-position="left"
@@ -271,15 +286,14 @@ getInventory()
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="updateDialogFormVisible = false">取消</el-button>
+        <el-button @click="updateInventoryCancel">取消</el-button>
         <el-button type="primary" @click="updateInventory">
           确定
         </el-button>
       </div>
     </template>
   </el-dialog>
-  <el-dialog v-model="uploadPictureVisible" title="上传图片" width="500">
-    <span style="color: #1a8170">{{ material }}</span>
+  <el-dialog v-model="uploadPictureVisible" :title="material" width="500" :before-close="handleClose">
     <div style="margin-left: 30%">
       <el-upload
           class="uploader"

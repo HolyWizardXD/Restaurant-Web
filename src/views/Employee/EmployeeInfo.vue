@@ -107,6 +107,11 @@ const addEmployee = async () => {
   // 提示信息
   ElMessage.success(result.msg ? result.msg : "新增员工成功")
 }
+// 关闭之前刷新数据
+const handleClose = (done) => {
+  done()
+  getEmployee()
+}
 // 修改员工信息dialog显示
 const dialog2 = (row) => {
   updateEmployeeForm.value = row
@@ -116,12 +121,26 @@ const dialog2 = (row) => {
 const updateEmployee = async () => {
   // 校验员工信息
   await form2.value.validate()
-  // 修改员工信息请求 修改员工信息修改的响应式数据 无需重新请求数据
+  // 修改员工信息请求
   let result = await updateEmployeeService(updateEmployeeForm.value)
   // 关闭dialog
   dialogFormVisible2.value = false
+  // 刷新数据
+  await getEmployee()
+  // 清空修改表单
+  updateEmployeeForm.value = {
+    id: '',
+    employeeName: '',
+    salary: '',
+    phone: ''
+  }
   // 提示信息
   ElMessage.success(result.msg ? result.msg : "员工修改成功")
+}
+// 取消修改员工信息函数
+const updateEmployeeCancel = () => {
+  dialogFormVisible2.value = false
+  getEmployee()
 }
 // 更改分页页数函数 未启用
 const handleSizeChange = () => {}
@@ -184,7 +203,7 @@ getEmployee()
       </div>
     </template>
   </el-dialog>
-  <el-dialog v-model="dialogFormVisible2" title="修改员工" width="500">
+  <el-dialog v-model="dialogFormVisible2" title="修改员工" width="500" :before-close="handleClose">
     <el-form
         :model="updateEmployeeForm"
         label-position="left"
@@ -204,7 +223,7 @@ getEmployee()
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogFormVisible2 = false">取消</el-button>
+        <el-button @click="updateEmployeeCancel">取消</el-button>
         <el-button type="primary" @click="updateEmployee">
           确定
         </el-button>
