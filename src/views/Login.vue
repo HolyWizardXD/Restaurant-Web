@@ -4,7 +4,8 @@ import {userRegisterService, userLoginService} from '@/api/user.js'
 import {ElMessage} from "element-plus";
 import {useTokenStore, useUserStore} from "@/stores";
 import {ref} from "vue";
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
+
 const router = useRouter()
 
 // 当前激活页面
@@ -121,7 +122,10 @@ const register = async () => {
 
 <template>
   <div class="login">
-    <h1 class="gradient-text">餐饮管理后台</h1>
+    <h1 class="gradient-text">
+      <img style="width: 80px;position: absolute;margin-top: -1px;margin-left: -80px" src="/src/assets/image/catering.png"/>
+      餐饮管理后台
+    </h1>
     <div class="form">
       <el-menu
           :default-active="activeIndex"
@@ -132,7 +136,8 @@ const register = async () => {
         <el-menu-item index="1" style="border-top-left-radius: 25px;"><p style="font-size: 20px">登录</p></el-menu-item>
         <el-menu-item index="2"><p style="font-size: 20px">注册</p></el-menu-item>
       </el-menu>
-      <el-form ref="loginFormVa" size="large" autocomplete="off" v-show="!isRegister" :model="loginForm" :rules="login_rules">
+      <el-form ref="loginFormVa" size="large" autocomplete="off" v-show="!isRegister" :model="loginForm"
+               :rules="login_rules">
         <el-form-item class="login_input" style="margin-top: 10%" prop="username">
           <el-input v-model="loginForm.username" :prefix-icon="User" placeholder="输入用户名"></el-input>
         </el-form-item>
@@ -218,6 +223,7 @@ const register = async () => {
   margin-left: 36%;
   width: 30%;
 }
+
 //  开源代码
 .gradient-text {
   /* Fallback: Set a background color. */
@@ -252,7 +258,7 @@ const register = async () => {
 
 }
 
-.gradient-text:hover{
+.gradient-text:hover {
   animation: rainbow-text-simple-animation 0.5s ease-in forwards;
 }
 
@@ -293,7 +299,7 @@ h1 {
   margin-bottom: 0;
   margin-bottom: -0.25em;
   display: block;
-  margin-left: auto;
+  margin-left: 36%;
   margin-right: auto;
   cursor: pointer;
   width: 605px;
