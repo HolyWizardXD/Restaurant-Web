@@ -232,16 +232,11 @@ getEmployee()
   </el-dialog>
   <div>
     <el-table :data="employeeData" style="width: 100%" height="775">
-      <el-table-column label="修改">
-        <template #default="props">
-          <el-button type="primary" @click="dialog2(props.row)">修改</el-button>
-        </template>
-      </el-table-column>
       <el-table-column label="员工号" prop="id"/>
       <el-table-column label="员工名" prop="employeeName"/>
       <el-table-column label="薪资/月" prop="salary"/>
       <el-table-column label="电话" prop="phone"/>
-      <el-table-column label="冻结/启用" align="right">
+      <el-table-column label="冻结/启用">
         <template #default="scope">
           <el-switch
               v-model="scope.row.status"
@@ -250,6 +245,11 @@ getEmployee()
               :inactive-value="2"
               @change="change(scope.row)"
           />
+        </template>
+      </el-table-column>
+      <el-table-column align="right" width="100px">
+        <template #default="props">
+          <el-button type="primary" @click="dialog2(props.row)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>

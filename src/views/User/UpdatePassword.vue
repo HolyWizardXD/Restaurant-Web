@@ -90,7 +90,7 @@ const updatePassword = async () => {
 .form {
   position: absolute;
   top: 40%;
-  left: 50%;
+  left: 52%;
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);

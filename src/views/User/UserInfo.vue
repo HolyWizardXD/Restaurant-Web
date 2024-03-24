@@ -57,20 +57,30 @@ getUser()
 </script>
 
 <template>
-  <div style="margin-top: 1%">
-    <el-descriptions title="个人信息">
-      <el-descriptions-item label="用户名:">{{ userStore.user.username }}</el-descriptions-item>
-      <el-descriptions-item label="手机号:">{{ phone }}</el-descriptions-item>
-      <el-descriptions-item label="状态:">
+  <div style="margin-top: 1%" class="form">
+    <el-descriptions title="个人信息" :column="1" size="large">
+      <el-descriptions-item label="用户名:" width="100px">{{ userStore.user.username }}</el-descriptions-item>
+      <el-descriptions-item label="手机号:" width="100px">{{ phone }}</el-descriptions-item>
+      <el-descriptions-item label="状态:" width="100px">
         <el-tag size="small">{{ status === 1?'启用':'冻结' }}</el-tag>
       </el-descriptions-item>
     </el-descriptions>
-  </div>
-  <div style="margin-top: 1%">
-    <el-button type="danger" @click="logoff">注销账户</el-button>
+    <el-button type="danger" @click="logoff">注销</el-button>
   </div>
 </template>
 
 <style scoped lang="scss">
+
+.form {
+  position: absolute;
+  top: 40%;
+  left: 53%;
+  width: 200px;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
 
 </style>

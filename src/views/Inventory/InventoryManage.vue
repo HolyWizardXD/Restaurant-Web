@@ -26,7 +26,7 @@ const pageInfo = ref({
   total: 0,
   pages: 0
 })
-// 分页查询数据
+// 返回分页查询数据
 const inventoryTable = ref([
   {
     id: '',
