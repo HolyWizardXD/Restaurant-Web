@@ -62,6 +62,13 @@ const uploadData = ref({
   id: '',
   file: null
 })
+// 清除上传缓存
+const clearUploadData = () => {
+  uploadData.value = {
+    id: '',
+    file: null
+  }
+}
 // 分类
 const classify = ref('')
 // 新增
@@ -209,12 +216,14 @@ const upload = async () => {
   }
   // 调用上传服务
   await uploadDishService(data)
-  // 刷新数据
-  await getDish()
+  // 清除上传缓存
+  clearUploadData()
   // 关闭dialog
   uploadDialogVisible.value = false
   // 提示
   ElMessage.success("修改图片成功")
+  // 刷新数据
+  await getDish()
 }
 // 取消图片上传
 const cancelUpload = () => {
@@ -222,10 +231,8 @@ const cancelUpload = () => {
   // 清空数据
   dishName.value = ''
   imgUrl.value = ''
-  uploadData.value = {
-    id: '',
-    file: null
-  }
+  // 清除上传缓存
+  clearUploadData()
 }
 // 删除菜品
 const deleteDish = async (id) => {
@@ -266,6 +273,8 @@ const handleCurrentChange = (val) => {
 }
 // 关闭之前刷新数据
 const handleClose = (done) => {
+  // 清除上传缓存
+  clearUploadData()
   done()
   getDish()
 }
@@ -403,7 +412,7 @@ getDish()
     </template>
   </el-dialog>
   <div class="searchAndAdd">
-    <div>
+    <div style="width: 600px">
       <el-input
           v-model="pageData.dishName"
           style="width: 300px"
@@ -441,7 +450,7 @@ getDish()
       <el-table-column label="菜品号" prop="id"/>
       <el-table-column label="菜品图片">
         <template #default="props">
-          <img :src="props.row.pictureUrl" class="pictureTwo">
+          <img :src="props.row.pictureUrl + '?' + Date.now() " class="pictureTwo">
         </template>
       </el-table-column>
       <el-table-column label="菜品名" prop="dishName"/>

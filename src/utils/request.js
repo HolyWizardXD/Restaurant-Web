@@ -10,7 +10,7 @@ const instance = axios.create({
     timeout: 10000
 });
 
-import {useTokenStore} from '@/stores'
+import {useTokenStore, useUserStore} from '@/stores'
 
 // 请求拦截器
 instance.interceptors.request.use(
@@ -42,8 +42,13 @@ instance.interceptors.response.use(
     },
     err => {
         if (err.response.status === 401) {
+            const tokenStore = useTokenStore()
+            const userStore = useUserStore()
+            tokenStore.removeToken()
+            userStore.removeUser()
             router.push('/login')
             ElMessage.error('未登录或登陆过期')
+
         } else {
             ElMessage.error('服务异常')
         }

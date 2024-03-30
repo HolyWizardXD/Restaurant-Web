@@ -96,7 +96,7 @@ const login = async () => {
   tokenStore.setToken(result.data.token)
   userStore.setUser(result.data.id, result.data.username)
   // router到主页
-  await router.push('/')
+  await router.push('/Order/HistoryOrder')
   // 提示
   ElMessage.success(result.msg ? result.msg : "登录成功")
 }

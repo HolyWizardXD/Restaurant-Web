@@ -129,28 +129,32 @@ pageList(false)
 <template>
   <div class="demo-date-picker">
     <div class="block">
-      <span style="color: #1a8170">日期范围: </span>
-      <el-date-picker
-          v-model="timeValue"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          range-separator="至"
-          :default-time="defaultTime"
-          unlink-panels
-      />
-      <span style="color: #1a8170;margin-left: 1%">顾客筛选: </span>
-      <el-input
-          v-model="orderPage.customerName"
-          style="width: 240px"
-          size="default"
-          placeholder="请输入顾客名"
-          @keyup.enter="pageList(false)"
-          :prefix-icon="Search"
-      />
-      <span style="color: #1a8170;margin-left: 1%">销售额:{{ allPrice }}元</span>
-      <el-button type="primary" @click="pageList(false)" style="margin-left: 39%">查询</el-button>
-      <el-button @click="pageList(true)">重置</el-button>
+      <div style="width: 950px;">
+        <span style="color: #1a8170">日期范围: </span>
+        <el-date-picker
+            v-model="timeValue"
+            type="daterange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            range-separator="至"
+            :default-time="defaultTime"
+            unlink-panels
+        />
+        <span style="color: #1a8170;margin-left: 1%">顾客筛选: </span>
+        <el-input
+            v-model="orderPage.customerName"
+            style="width: 240px"
+            size="default"
+            placeholder="请输入顾客名"
+            @keyup.enter="pageList(false)"
+            :prefix-icon="Search"
+        />
+        <span style="color: #1a8170;margin-left: 1%">销售额:{{ allPrice }}元</span>
+      </div>
+      <div style="width: 180px;">
+        <el-button type="primary" @click="pageList(false)">查询</el-button>
+        <el-button @click="pageList(true)">重置</el-button>
+      </div>
     </div>
   </div>
   <el-table :data="tableData" style="width: 100%" height="720">
@@ -171,7 +175,7 @@ pageList(false)
     </el-table-column>
     <el-table-column label="订单号" prop="id"/>
     <el-table-column label="顾客名" prop="customerName"/>
-    <el-table-column label="桌号" prop="table"/>
+    <el-table-column label="桌号(0表示打包)" prop="table"/>
     <el-table-column label="总价格/元" prop="allPrice"/>
     <el-table-column label="下单时间" prop="createTime"/>
     <el-table-column label="出餐">
@@ -214,8 +218,9 @@ pageList(false)
 }
 
 .demo-date-picker .block {
+  display: flex;
+  justify-content: space-between;
   padding: 30px 0;
-  flex-direction: column;
   border-right: solid 1px var(--el-border-color);
   flex: 1;
 }

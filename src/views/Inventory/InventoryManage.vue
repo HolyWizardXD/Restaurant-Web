@@ -62,6 +62,18 @@ const addDialogFormVisible = ref(false)
 const updateDialogFormVisible = ref(false)
 // 上传图片dialog显示
 const uploadPictureVisible = ref(false)
+// 上传Data
+const uploadData = ref({
+  id: '',
+  file: null
+})
+// 清除上传缓存
+const clearUploadData = () => {
+  uploadData.value = {
+    id: '',
+    file: null
+  }
+}
 // 分页查询原料数据
 const getInventory = async () => {
   // 查询请求
@@ -75,6 +87,7 @@ const getInventory = async () => {
 }
 // 关闭之前刷新数据
 const handleClose = (done) => {
+  clearUploadData()
   done()
   getInventory()
 }
@@ -163,12 +176,8 @@ const beforeAvatarUpload = (rawFile) => {
   }
   return true
 }
-const material = ref('')
 // 原料名称
-const uploadData = ref({
-  id: '',
-  file: null
-})
+const material = ref('')
 // 图片预览
 const onSelectPicture = (uploadFile) => {
   imgUrl.value = URL.createObjectURL(uploadFile.raw)
@@ -190,10 +199,7 @@ const cancelUpload = () => {
   uploadPictureVisible.value = false
   material.value = ''
   imgUrl.value = ''
-  uploadData.value = {
-    id: '',
-    file: null
-  }
+  clearUploadData()
 }
 // 确认上传
 const uploadPictureConfirm = async () => {
@@ -202,6 +208,8 @@ const uploadPictureConfirm = async () => {
   for(let key in uploadData.value){
     data.append(key,uploadData.value[key])
   }
+  // 清空上传信息
+  clearUploadData()
   // 调用上传服务
   await uploadPictureService(data)
   // 刷新数据
@@ -322,7 +330,7 @@ getInventory()
       <el-table-column label="原料号" prop="id"/>
       <el-table-column label="原料图片">
         <template #default="props">
-          <img :src="props.row.pictureUrl" class="pictureTwo">
+          <img :src="props.row.pictureUrl + '?' + Date.now()" class="pictureTwo">
         </template>
       </el-table-column>
       <el-table-column label="原料名" prop="material"/>
