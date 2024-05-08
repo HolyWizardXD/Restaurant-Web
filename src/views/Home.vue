@@ -16,7 +16,7 @@ import {onUnmounted, ref} from "vue";
 import Stomp from 'stompjs'
 import {useRouter} from 'vue-router'
 import {useUserStore, useTokenStore} from "@/stores/index.js";
-import {userLogoutService} from '@/api/user.js'
+import {userLogoutService,getUserService} from '@/api/user.js'
 import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
 const router = useRouter()
@@ -26,13 +26,15 @@ const userStore = useUserStore()
 const tokenStore = useTokenStore()
 
 // RabbitMQ配置
-const MQTT_SERVICE = 'ws://localhost:15674/ws' // mqtt服务地址
-const MQTT_USERNAME = 'guest' // mqtt连接用户名
-const MQTT_PASSWORD = 'guest' // mqtt连接密码
+const MQTT_SERVICE = 'ws://123.56.137.180:15674/ws' // mqtt服务地址
+const MQTT_USERNAME = 'holy' // mqtt连接用户名
+const MQTT_PASSWORD = '2354818484' // mqtt连接密码
 
 const client = Stomp.client(MQTT_SERVICE)
 // 关闭控制台消息
 client.debug = null
+client.heartbeat.outgoing = 8000;
+client.heartbeat.incoming = 8000;
 
 // 连接到RabbitMQ
 const onConnected = () => {
@@ -52,7 +54,10 @@ const responseCallBack = (frame) => {
 }
 // 连接失败函数
 const onFailed = (frame) => {
-  ElMessage.error("Failed => " + frame)
+  ElMessage.error("Failed => " + frame + "--5秒后尝试重连")
+  window.setTimeout(() => {
+    connect()
+  },5000)
 }
 // 连接函数
 const connect = () => {
@@ -113,6 +118,12 @@ const logout = () => {
 // 未启用
 const handleSelect = (key, keyPath) => {
 }
+
+const validate = async () => {
+   await getUserService(userStore.user.id)
+}
+
+validate()
 
 </script>
 <template>

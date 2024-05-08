@@ -17,6 +17,7 @@ const app = createApp(App)
 app.use(pinia)
 app.use(router)
 
+// ElementPlus设置为中文
 app.use(ElementPlus, {
     locale: zhCn,
 })
